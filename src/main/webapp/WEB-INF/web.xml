@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+         xmlns="http://java.sun.com/xml/ns/javaee"
+
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+
+         version="3.0">
+    <display-name>Servlet Application</display-name>
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>default.html</welcome-file>
+        <welcome-file>default.htm</welcome-file>
+        <welcome-file>default.jsp</welcome-file>
+    </welcome-file-list>
+
+
+    <!--<servlet>
+        <servlet-name>mainServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.MainServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mainServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>-->
+
+    <servlet>
+        <servlet-name>returnAllDataServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.ReturnAllDataServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>returnAllDataServlet</servlet-name>
+        <url-pattern>/data</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>returnAllSubjectsServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.ReturnAllSubjectsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>returnAllSubjectsServlet</servlet-name>
+        <url-pattern>/subjects</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>returnAllStudentsServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.RetunAllStudentsServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>returnAllStudentsServlet</servlet-name>
+        <url-pattern>/students</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>helloServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.HelloServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>helloServlet</servlet-name>
+        <url-pattern>/hello</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>editStudentMainServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.EditStudentMainServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>editStudentMainServlet</servlet-name>
+        <url-pattern>/editStudent</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>editStudentServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.EditStudentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>editStudentServlet</servlet-name>
+        <url-pattern>/editStudent2</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>deleteStudentServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.DeleteStudentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deleteStudentServlet</servlet-name>
+        <url-pattern>/deleteStudent</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>addNewStudentMainServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.AddNewStudentMainServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>addNewStudentMainServlet</servlet-name>
+        <url-pattern>/addNewStudent</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>addNewStudentServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.AddNewStudentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>addNewStudentServlet</servlet-name>
+        <url-pattern>/addNewStudent2</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>addDataToStudentServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.AddSubjectAndMarkToStudentMainServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>addDataToStudentServlet</servlet-name>
+        <url-pattern>/addNewDataToStudent</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>addDataToStudentServlet2</servlet-name>
+        <servlet-class>com.servletSample.servlet.AddSubjectAndMarkToStudentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>addDataToStudentServlet2</servlet-name>
+        <url-pattern>/addNewDataToStudent2</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>returnDataForOneStudent</servlet-name>
+        <servlet-class>com.servletSample.servlet.ReturnDataForOneStudent</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>returnDataForOneStudent</servlet-name>
+        <url-pattern>/returnDataForStudent</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>returnDataForOneStudent2</servlet-name>
+        <servlet-class>com.servletSample.servlet.ReturnAllDataForStudent2</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>returnDataForOneStudent2</servlet-name>
+        <url-pattern>/returnDataForStudent2</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>editSubjectMainServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.EditSubjectMainServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>editSubjectMainServlet</servlet-name>
+        <url-pattern>/EditSubjectServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>editSubjectServlet</servlet-name>
+        <servlet-class>com.servletSample.servlet.EditSubjectServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>editSubjectServlet</servlet-name>
+        <url-pattern>/editSubject2</url-pattern>
+    </servlet-mapping>
+
+</web-app>
