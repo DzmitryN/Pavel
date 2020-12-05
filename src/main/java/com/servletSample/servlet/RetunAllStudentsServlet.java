@@ -1,15 +1,11 @@
 package com.servletSample.servlet;
 
-
-import dao.entities.impl.MarkSheetDAOImpl;
 import dao.entities.impl.StudentDAOImpl;
-import dao.interfaces.Marks_SheetDAO;
 import dao.interfaces.StudentDAO;
-import entities.MarksSheet;
 import entities.Student;
 import exceptions.DAOException;
-
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +14,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@WebServlet("/students")
 public class RetunAllStudentsServlet extends HttpServlet{
 
     @Override

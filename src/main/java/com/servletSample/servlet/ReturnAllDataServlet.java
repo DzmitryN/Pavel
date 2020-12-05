@@ -1,12 +1,12 @@
 package com.servletSample.servlet;
 
-
 import dao.entities.impl.MarkSheetDAOImpl;
 import dao.interfaces.Marks_SheetDAO;
 import entities.MarksSheet;
 import exceptions.DAOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+@WebServlet("/data")
 public class ReturnAllDataServlet extends HttpServlet {
 
     @Override
