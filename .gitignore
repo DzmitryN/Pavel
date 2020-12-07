@@ -5,10 +5,10 @@
 *.log
 
 # Idea folder
-** /.idea
+.idea/
 
 # Target folder
-** /target
+target/
 
 
 # BlueJ files
