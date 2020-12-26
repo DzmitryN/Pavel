@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/subjects")
+//@WebServlet("/subjects")
 public class ReturnAllSubjectsServlet extends HttpServlet{
 
     @Override
@@ -26,7 +26,7 @@ public class ReturnAllSubjectsServlet extends HttpServlet{
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();
         out.println("<h1>All Subjects</h1>");
-        out.print("<table border='1' width='100%'");
+        out.print("<table border='1' width='100%'>");
         out.print("<tr><th>Id</th><th>Subject</th><th>Edit</th></tr>");
 
         try {

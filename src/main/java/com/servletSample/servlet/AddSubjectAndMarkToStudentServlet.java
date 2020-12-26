@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-@WebServlet("/addNewDataToStudent2")
+//@WebServlet("/addNewDataToStudent2")
 public class AddSubjectAndMarkToStudentServlet extends HttpServlet{
 
     @Override

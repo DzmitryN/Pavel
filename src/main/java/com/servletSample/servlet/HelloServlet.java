@@ -7,9 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
-@WebServlet("/hello")
+//@WebServlet("/hello.jsp")
 public class HelloServlet
      extends HttpServlet {
 
@@ -18,16 +17,18 @@ public class HelloServlet
 
             throws ServletException, IOException {
 
-        resp.setContentType("text/html");
-        PrintWriter out = resp.getWriter();
+        //resp.setContentType("text/html");
+        /*PrintWriter out = resp.getWriter();
         out.write("Hello Everybody!");
         out.write("<p>");
         out.write("<a href=\"/\"><input type= \"button\" value= \"Press for return to start page!\"></a>");
         out.write("</p>");
-        out.close();
+        out.close();*/
+        //resp.sendRedirect("/Hello.jsp");
+        getServletContext().getRequestDispatcher("/Hello.jsp").forward(req, resp);
     }
 
-    @Override
+    /*@Override
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 
@@ -35,5 +36,5 @@ public class HelloServlet
 
         doGet(req, resp);
 
-    }
+    }*/
 }

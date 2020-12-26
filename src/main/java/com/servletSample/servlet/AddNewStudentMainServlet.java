@@ -8,8 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/addNewStudent")
-public class AddNewStudentMainServlet extends HttpServlet{
+//@WebServlet("/addNewStudent")
+public class  AddNewStudentMainServlet extends HttpServlet{
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)

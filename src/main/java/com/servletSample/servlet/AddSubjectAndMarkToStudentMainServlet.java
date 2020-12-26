@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@WebServlet("/addNewDataToStudent")
+//@WebServlet("/addNewDataToStudent")
 public class AddSubjectAndMarkToStudentMainServlet extends HttpServlet {
 
     @Override

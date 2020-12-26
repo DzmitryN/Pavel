@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/returnDataForStudent")
+//@WebServlet("/returnDataForStudent")
 public class ReturnDataForOneStudent extends HttpServlet{
 
     @Override

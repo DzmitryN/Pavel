@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/main")
+//@WebServlet("/main.jsp")
 public class MainViewServlet extends HttpServlet {
 
     @Override
@@ -27,7 +27,7 @@ public class MainViewServlet extends HttpServlet {
         out.write("<body>");
         out.write("Let`s go!!! Just do it!!!");
         out.write("<p>");
-        out.write("<a href=\"hello\"><input type= \"button\"  value= \"Press for hello!\"></a>");
+        out.write("<a href=\"hello.jsp\"><input type= \"button\"  value= \"Press for hello!\"></a>");
         out.write("</p>");
         out.write("<p>");
         out.write("<a href=\"students\"><input type= \"button\" value= \"Press for getting all students!\"></a>");
