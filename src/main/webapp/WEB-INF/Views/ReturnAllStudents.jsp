@@ -11,7 +11,11 @@
 
 <h1>All Students</h1>
 <table border='1' width='100%'>
-    <tr><th>Name</th><th>Second Name</th><th>Edit</th><th>Delete</th></tr>
+    <tr>
+        <th>Name</th>
+        <th>Second Name</th>
+        <th>Edit</th>
+        <th>Delete</th></tr>
     <% for( Student student : list){%>
     <tr>
         <td><%= student.getFirstName() %></td>
@@ -23,8 +27,12 @@
 
 </table>
 
-<p><a href="addNewStudent"><input type= "button" value= "Press for add new Student"></a></p>
-<p><a href="/"><input type= "button" value= "Press for return to start page"></a></p>
+<p>
+    <a href="addNewStudent"><input type= "button" value= "Add new Student"></a>
+</p>
+<p>
+    <a href="/"><input type= "button" value= "Return to start page"></a>
+</p>
 
 </body>
 </html>

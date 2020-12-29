@@ -18,10 +18,6 @@ public class Dispatcher {
                 HelloController helloController = new HelloController();
                 helloController.OpenPage(req, resp);
                 break;
-            case "/MAIN":
-                MainController mainController = new MainController();
-                mainController.OpenPage(req, resp);
-                break;
             case "/ADDNEWSTUDENT":
                 AddNewStudentMainController addNewStudentMainController = new AddNewStudentMainController();
                 addNewStudentMainController.OpenPage(req, resp);

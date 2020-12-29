@@ -17,6 +17,7 @@ public class DeleteStudentController {
             studentDAO.delete(id);
 
             response.sendRedirect("students");
+            studentDAO.close();
         }catch (DAOException e) {
             e.printStackTrace();
         }

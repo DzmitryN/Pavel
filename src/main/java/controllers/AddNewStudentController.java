@@ -25,11 +25,10 @@ public class AddNewStudentController {
         studentDAO.save(student);
 
         response.sendRedirect("students");
+        studentDAO.close();
         } catch (
                 DAOException e) {
             e.printStackTrace();
         }
-        //RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/Views/AddNewStudent.jsp");
-        //requestDispatcher.forward(request, response);
     }
 }

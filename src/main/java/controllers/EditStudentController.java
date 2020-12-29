@@ -29,6 +29,7 @@ public class EditStudentController {
             studentDAO.update(student);
 
             response.sendRedirect("students");
+            studentDAO.close();
 
         } catch (DAOException e) {
             e.printStackTrace();
