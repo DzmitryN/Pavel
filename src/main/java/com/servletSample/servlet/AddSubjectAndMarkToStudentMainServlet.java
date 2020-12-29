@@ -1,6 +1,5 @@
 package com.servletSample.servlet;
 
-
 import dao.entities.impl.MarkDAOImpl;
 import dao.entities.impl.StudentDAOImpl;
 import dao.entities.impl.SubjectDAOImpl;
@@ -13,6 +12,7 @@ import entities.Subject;
 import exceptions.DAOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+
+@WebServlet("/addNewDataToStudent")
 public class AddSubjectAndMarkToStudentMainServlet extends HttpServlet {
 
     @Override

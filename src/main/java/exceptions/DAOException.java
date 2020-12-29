@@ -1,8 +1,6 @@
 package exceptions;
 
 
-import java.util.Arrays;
-
 public class DAOException extends Exception {
 
     public DAOException(){
