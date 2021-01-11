@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="entities.Student" import="java.util.ArrayList"%>
 <%ArrayList<Student> list =  (ArrayList<Student>)request.getAttribute("students"); %>
+<%String pages = (String)request.getAttribute("pages");%>
 
 
 <html>
@@ -35,4 +36,9 @@
 </p>
 
 </body>
+<footer>
+    <%for(int i = 0; i < Integer.parseInt(pages); i++){%>
+    <a href='/students?start=<%=i%>'><input type="button" value="<%=i + 1%>" style = "padding: 5px 7px"/></a>
+    <%}%>
+</footer>
 </html>

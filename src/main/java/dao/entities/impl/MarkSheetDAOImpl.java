@@ -18,8 +18,8 @@ public class MarkSheetDAOImpl extends AbstractDAO implements Marks_SheetDAO {
                             "join Studschema.subject SB\n" +
                             "on ms.subject_id = SB.id\n" +
                             "join Studschema.mark m\n" +
-                            "on ms.mark_id = m.id";
-    private PreparedStatement selectAll;
+                            "on ms.mark_id = m.id LIMIT %d0, 10";
+    private PreparedStatement selectAll_PS;
 
     private static final String getByIdQuery = "Select S.id, S.first_name, S.second_name, SB.subject, m.mark\n" +
                     "from Studschema.Marks_Sheet MS\n" +
@@ -29,18 +29,49 @@ public class MarkSheetDAOImpl extends AbstractDAO implements Marks_SheetDAO {
                     "on ms.subject_id = SB.id\n" +
                     "join Studschema.mark m\n" +
                     "on ms.mark_id = m.id\n" +
-                    "where s.ID = ?";
-    private  PreparedStatement getbyIdPS;
+                    "where s.ID = ? LIMIT %d0, 10";
+    private  PreparedStatement getById_PS;
+
+    private static final String getById_Range_Query = "Select count(1)\n" +
+            "from Studschema.Marks_Sheet MS\n" +
+            "join Studschema.student S\n" +
+            "on ms.student_id = s.id\n" +
+            "join Studschema.subject SB\n" +
+            "on ms.subject_id = SB.id\n" +
+            "join Studschema.mark m\n" +
+            "on ms.mark_id = m.id\n" +
+            "where s.ID = ?";
+    private  PreparedStatement getById_Pagination_PS;
 
     private static final String saveQuery = "INSERT INTO Studschema.MARKS_SHEET (Student_id, subject_id, mark_id) VALUES(?, ?, ?)";
-    private  PreparedStatement savePS;
+    private  PreparedStatement save_PS;
+
+    private static final String paginationQuery = "Select count(1)\n" +
+            "from Studschema.Marks_Sheet MS\n" +
+            "join Studschema.student S\n" +
+            "on ms.student_id = s.id\n" +
+            "join Studschema.subject SB\n" +
+            "on ms.subject_id = SB.id\n" +
+            "join Studschema.mark m\n" +
+            "on ms.mark_id = m.id";
+    private PreparedStatement pagination_PS;
 
 
     public MarkSheetDAOImpl() throws DAOException {
         try {
-            selectAll = connection.prepareStatement(selectAllQuery);
-            getbyIdPS = connection.prepareStatement(getByIdQuery);
-            savePS = connection.prepareStatement(saveQuery);
+            save_PS = connection.prepareStatement(saveQuery);
+        } catch (SQLException e) {
+            throw new DAOException("Exception occurred in MarkDaoConstructor." , e);
+        }
+    }
+
+    public MarkSheetDAOImpl(int range) throws DAOException {
+        try {
+            selectAll_PS = connection.prepareStatement(String.format(selectAllQuery, range));
+            getById_PS = connection.prepareStatement(String.format(getByIdQuery, range));
+            save_PS = connection.prepareStatement(saveQuery);
+            pagination_PS = connection.prepareStatement(paginationQuery);
+            getById_Pagination_PS = connection.prepareStatement(getById_Range_Query);
         } catch (SQLException e) {
             throw new DAOException("Exception occurred in MarkDaoConstructor." , e);
         }
@@ -49,7 +80,7 @@ public class MarkSheetDAOImpl extends AbstractDAO implements Marks_SheetDAO {
     @Override
     public List<MarksSheet> findAll() throws DAOException {
         List<MarksSheet> marks_sheets = new ArrayList<>();
-        try(ResultSet rs = selectAll.executeQuery()) {
+        try(ResultSet rs = selectAll_PS.executeQuery()) {
             while (rs.next()) {
                 MarksSheet mark_sheet = new MarksSheet();
                 mark_sheet.setID(rs.getInt("ID"));
@@ -69,10 +100,10 @@ public class MarkSheetDAOImpl extends AbstractDAO implements Marks_SheetDAO {
     public void save(MarksSheet mark) throws DAOException{
         try
         {
-            savePS.setInt(1, mark.getStudent_id());
-            savePS.setInt(2, mark.getSubject_id());
-            savePS.setInt(3, mark.getMark_id());
-            savePS.executeUpdate();
+            save_PS.setInt(1, mark.getStudent_id());
+            save_PS.setInt(2, mark.getSubject_id());
+            save_PS.setInt(3, mark.getMark_id());
+            save_PS.executeUpdate();
         }catch(Exception e){
             throw new DAOException("Exception occurred in save function" , e);
         }
@@ -84,8 +115,8 @@ public class MarkSheetDAOImpl extends AbstractDAO implements Marks_SheetDAO {
         List<MarksSheet> marks_sheets = new ArrayList<>();
         ResultSet rs = null;
         try{
-            getbyIdPS.setInt(1, id);
-            rs = getbyIdPS.executeQuery();
+            getById_PS.setInt(1, id);
+            rs = getById_PS.executeQuery();
             while (rs.next()) {
                 MarksSheet marks_sheet = new MarksSheet();
                 marks_sheet.setID(rs.getInt("ID"));
@@ -109,6 +140,42 @@ public class MarkSheetDAOImpl extends AbstractDAO implements Marks_SheetDAO {
     }
 
     @Override
+    public int pagination() throws DAOException{
+        int result = 0;
+        try(ResultSet rs = pagination_PS.executeQuery()){
+            if (rs.next()) {
+                result = rs.getInt(1);
+            }
+        }catch(Exception e){
+            throw new DAOException("Exception occurred in pagination call MarkSheetDAO" + e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public int pagination_ById(int id) throws DAOException{
+        int result = 0;
+        ResultSet rs = null;
+        try{
+        getById_Pagination_PS.setInt(1, id);
+        rs = getById_Pagination_PS.executeQuery();
+            if (rs.next()) {
+                result = rs.getInt(1);
+            }
+        }catch(Exception e){
+            throw new DAOException("Exception occurred in pagination by id call MarkSheetDAO" + e.getMessage());
+        }
+        finally {
+            try {
+                rs.close();
+            } catch (Exception e) {
+                throw new DAOException("Exception occurred in getById function, finally block", e);
+            }
+        }
+        return result;
+    }
+
+    @Override
     public void update(MarksSheet mark){
 
     }
@@ -121,7 +188,7 @@ public class MarkSheetDAOImpl extends AbstractDAO implements Marks_SheetDAO {
     public void close() throws DAOException {
         DAOException daoException = null;
         try {
-            getbyIdPS.close();
+            getById_PS.close();
         }catch (Exception e) {
             daoException = new DAOException("Exception occurred in Close function, getById PS", e);
         }

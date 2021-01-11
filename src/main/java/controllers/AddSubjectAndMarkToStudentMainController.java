@@ -28,11 +28,11 @@ public class AddSubjectAndMarkToStudentMainController {
             try {
                 studentDAO = new StudentDAOImpl();
                 List<Student> list = new ArrayList<>();
-                list.addAll(studentDAO.findAll());
+                list.addAll(studentDAO.findAll(false));
 
                 subjectDAO = new SubjectDAOImpl();
                 List<Subject> listSubjects = new ArrayList<>();
-                listSubjects.addAll(subjectDAO.findAll());
+                listSubjects.addAll(subjectDAO.findAll(false));
 
 
                 markDAO = new MarkDAOImpl();

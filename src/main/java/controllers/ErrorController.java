@@ -9,7 +9,10 @@ import java.io.IOException;
 
 public class ErrorController {
     public void OpenPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher( "WEB-INF/Views/Error.jsp");
+        String dir = request.getRequestURI();
+        String path = dir.replaceAll(dir, "");
+
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher( path + "WEB-INF/Views/Error.jsp");
         requestDispatcher.forward(request, response);
     }
 }

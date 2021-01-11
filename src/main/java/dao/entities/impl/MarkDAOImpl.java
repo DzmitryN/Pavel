@@ -11,23 +11,23 @@ import java.util.List;
 public class MarkDAOImpl extends AbstractDAO implements MarkDAO {
 
     private static final String selectAllQuery = "SELECT ID, Mark FROM STUDSCHEMA.MARK";
-    private PreparedStatement selectAll;
+    private PreparedStatement selectAll_PS;
     private static final String insertQuery = "INSERT INTO Studschema.Mark(Mark) VALUES (?)";
-    private PreparedStatement insert;
+    private PreparedStatement insert_PS;
     private static final String getByIdQuery = "SELECT ID, Mark FROM Studschema.Mark WHERE ID = ?";
-    private  PreparedStatement getbyIdPS;
+    private  PreparedStatement getById_PS;
     private static final String updateQuery = "UPDATE Studschema.Mark SET Mark = ? WHERE ID = ?";
-    private PreparedStatement updatePS;
+    private PreparedStatement update_PS;
     private static final String deleteQuery = "DELETE FROM Studschema.Mark WHERE ID = ?";
-    private PreparedStatement deletePS;
+    private PreparedStatement delete_PS;
 
     public MarkDAOImpl() throws DAOException {
         try {
-            selectAll = connection.prepareStatement(selectAllQuery);
-            insert = connection.prepareStatement(insertQuery);
-            getbyIdPS = connection.prepareStatement(getByIdQuery);
-            updatePS = connection.prepareStatement(updateQuery);
-            deletePS = connection.prepareStatement(deleteQuery);
+            selectAll_PS = connection.prepareStatement(selectAllQuery);
+            insert_PS = connection.prepareStatement(insertQuery);
+            getById_PS = connection.prepareStatement(getByIdQuery);
+            update_PS = connection.prepareStatement(updateQuery);
+            delete_PS = connection.prepareStatement(deleteQuery);
         } catch (SQLException e) {
             throw new DAOException("Exception occurred in MarkDaoConstructor." , e);
         }
@@ -37,7 +37,7 @@ public class MarkDAOImpl extends AbstractDAO implements MarkDAO {
     @Override
     public List<Mark> findAll() throws DAOException {
         List<Mark> marks = new ArrayList<>();
-        try  (ResultSet rs = selectAll.executeQuery()){
+        try  (ResultSet rs = selectAll_PS.executeQuery()){
             while (rs.next()) {
                 Mark mark = new Mark();
                 mark.setID(rs.getInt("ID"));
@@ -54,8 +54,8 @@ public class MarkDAOImpl extends AbstractDAO implements MarkDAO {
     @Override
     public void save(Mark mark) throws DAOException {
         try{
-             insert.setInt(1, mark.getMark());
-             insert.executeUpdate();
+             insert_PS.setInt(1, mark.getMark());
+             insert_PS.executeUpdate();
         }catch (Exception e) {
              throw new DAOException("Exception occurred in save function" , e);
         }
@@ -66,8 +66,8 @@ public class MarkDAOImpl extends AbstractDAO implements MarkDAO {
         Mark mark = new Mark();
         ResultSet rs = null;
         try{
-            getbyIdPS.setInt(1, id);
-            rs = getbyIdPS.executeQuery();
+            getById_PS.setInt(1, id);
+            rs = getById_PS.executeQuery();
             while (rs.next()) {
                 mark.setID(rs.getInt("ID"));
                 mark.setMark(rs.getInt("Mark"));
@@ -89,9 +89,9 @@ public class MarkDAOImpl extends AbstractDAO implements MarkDAO {
     public void update(Mark mark) throws DAOException {
         try
         {
-            updatePS.setInt(1, mark.getMark());
-            updatePS.setInt(2, mark.getID());
-            updatePS.executeUpdate();
+            update_PS.setInt(1, mark.getMark());
+            update_PS.setInt(2, mark.getID());
+            update_PS.executeUpdate();
         } catch (Exception e) {
             throw new DAOException("Exception occurred in update function." , e);
         }
@@ -100,8 +100,8 @@ public class MarkDAOImpl extends AbstractDAO implements MarkDAO {
     @Override
     public void delete(int id) throws DAOException {
         try{
-            deletePS.setInt(1, id);
-            deletePS.executeUpdate();
+            delete_PS.setInt(1, id);
+            delete_PS.executeUpdate();
         } catch (Exception e) {
             throw new DAOException("Exception occurred in delete function.", e);
         }
@@ -110,22 +110,22 @@ public class MarkDAOImpl extends AbstractDAO implements MarkDAO {
     public void close() throws DAOException {
         DAOException daoException = null;
         try {
-            insert.close();
+            insert_PS.close();
         }catch(Exception e) {
             daoException = new DAOException("Exception occurred in Close function, Insert PS", e);
         }
         try {
-            getbyIdPS.close();
+            getById_PS.close();
         }catch (Exception e) {
             daoException = new DAOException("Exception occurred in Close function, getById PS", e);
         }
         try {
-            updatePS.close();
+            update_PS.close();
         }catch(Exception e) {
             daoException = new DAOException("Exception occurred in Close function, Update PS", e);
         }
         try {
-            deletePS.close();
+            delete_PS.close();
         }catch(Exception e) {
             daoException = new DAOException("Exception occurred in Close function, Delete PS",e);
         }

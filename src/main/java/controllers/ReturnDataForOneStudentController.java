@@ -20,7 +20,7 @@ public class ReturnDataForOneStudentController {
         try {
             studentDAO = new StudentDAOImpl();
             List<Student> list = new ArrayList<>();
-            list.addAll(studentDAO.findAll());
+            list.addAll(studentDAO.findAll(false));
             request.setAttribute("students", list);
             studentDAO.close();
         } catch (DAOException e) {

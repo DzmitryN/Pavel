@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="entities.MarksSheet" import="java.util.ArrayList"%>
 <%ArrayList<MarksSheet> marksSheets =  (ArrayList<MarksSheet>)request.getAttribute("marks_sheetDTO"); %>
+<%String pages = (String)request.getAttribute("pages");%>
 
 <html>
 <head>
@@ -33,4 +34,9 @@
     <a href="/"><input type= "button" value= "Return to start page"></a>
 </p>
 </body>
+<footer>
+    <%for(int i = 0; i < Integer.parseInt(pages); i++){%>
+    <a href='/data?start=<%=i%>'><input type="button" value="<%=i + 1%>" style = "padding: 5px 7px"/></a>
+    <%}%>
+</footer>
 </html>

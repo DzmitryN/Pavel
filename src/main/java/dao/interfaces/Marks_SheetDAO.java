@@ -13,6 +13,8 @@ public interface Marks_SheetDAO {
     List<MarksSheet> getById(int id) throws DAOException;
     void update(MarksSheet mark);
     void delete(int id);
+    int pagination() throws DAOException;
+    int pagination_ById(int id) throws DAOException;
     void close() throws DAOException;
 
 }

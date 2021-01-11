@@ -4,6 +4,7 @@ import dao.entities.impl.MarkSheetDAOImpl;
 import dao.interfaces.Marks_SheetDAO;
 import entities.MarksSheet;
 import exceptions.DAOException;
+import utils.Validator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,15 +15,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReturnAllDataForStudent2Controller {
+    Validator validator = new Validator();
     public void OpenPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-
+        int start =0;
         try{
-            int sId=Integer.parseInt(request.getParameter("student"));
 
-            Marks_SheetDAO marks_sheetDAO = new MarkSheetDAOImpl();
+            try{
+                start = Integer.parseInt(request.getParameter("start"));
+            }catch(Exception e){}
+            int sId = 0;
+            try{
+                sId = Integer.parseInt(request.getParameter("student"));
+            }catch(Exception e){
+            }
+
+            Marks_SheetDAO marks_sheetDAO = new MarkSheetDAOImpl(start);
             List<MarksSheet> list = new ArrayList<>();
-            list.addAll( marks_sheetDAO.getById(sId));
+            list.addAll(marks_sheetDAO.getById(sId));
             request.setAttribute("MS_DTO", list);
+            String pages = "" + validator.GetNumberOfPages(marks_sheetDAO.pagination_ById(sId));
+            request.setAttribute("pages", pages);
+            request.setAttribute("StudentId", "" + sId);
             marks_sheetDAO.close();
         } catch (DAOException e) {
             e.printStackTrace();
