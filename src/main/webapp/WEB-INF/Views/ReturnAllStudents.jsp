@@ -29,16 +29,16 @@
 </table>
 
 <p>
-    <a href="addNewStudent"><input type= "button" value= "Add new Student"></a>
+    <a href="/addNewStudent"><input type= "button" value= "Add new Student"></a>
 </p>
 <p>
     <a href="/"><input type= "button" value= "Return to start page"></a>
 </p>
 
 </body>
-<footer>
+<footer><%if(Integer.parseInt(pages) > 1){%>
     <%for(int i = 0; i < Integer.parseInt(pages); i++){%>
     <a href='/students?start=<%=i%>'><input type="button" value="<%=i + 1%>" style = "padding: 5px 7px"/></a>
-    <%}%>
+    <%}}%>
 </footer>
 </html>

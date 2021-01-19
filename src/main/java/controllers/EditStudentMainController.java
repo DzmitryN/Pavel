@@ -5,14 +5,13 @@ import dao.interfaces.StudentDAO;
 import entities.Student;
 import exceptions.DAOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class EditStudentMainController {
-    public void OpenPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void openPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         int sid = Integer.parseInt((request.getParameter("id")));
         try{
@@ -23,8 +22,6 @@ public class EditStudentMainController {
         } catch (DAOException e) {
             e.printStackTrace();
         }
-
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/Views/EditStudentMain.jsp");
-        requestDispatcher.forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/Views/EditStudentMain.jsp").forward(request, response);
     }
 }

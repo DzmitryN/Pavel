@@ -18,7 +18,7 @@ public class StudentDAOinWork {
             List<Student> list = new ArrayList<>();
 
             studentDao.save(student.studentInitializing("Taymoor1", "Heroev2"));
-            list.addAll(studentDao.findAll(false));
+            list.addAll(studentDao.findAll(10));
             studentDao.getById(1);
             studentDao.update(student.studentInitializing(1, "Stepan", "Makarov"));
             //studentDao.delete(7);

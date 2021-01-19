@@ -13,7 +13,7 @@
 </head>
 <body>
 <h1>Add Subject And Mark For The Student</h1>
-<form action='addNewDataToStudent2' method='POST'>
+<form action='/addNewDataToStudent2' method='POST'>
     <table>
         <tr>
             <td>Student:</td>

@@ -11,28 +11,26 @@ import entities.Student;
 import entities.Subject;
 import exceptions.DAOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AddSubjectAndMarkToStudentMainController {
-        public void OpenPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        public void openPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
             StudentDAO studentDAO = null;
             SubjectDAO subjectDAO = null;
             MarkDAO markDAO = null;
             try {
                 studentDAO = new StudentDAOImpl();
                 List<Student> list = new ArrayList<>();
-                list.addAll(studentDAO.findAll(false));
+                list.addAll(studentDAO.findAll(null));
 
                 subjectDAO = new SubjectDAOImpl();
                 List<Subject> listSubjects = new ArrayList<>();
-                listSubjects.addAll(subjectDAO.findAll(false));
+                listSubjects.addAll(subjectDAO.findAll(null));
 
 
                 markDAO = new MarkDAOImpl();
@@ -51,7 +49,6 @@ public class AddSubjectAndMarkToStudentMainController {
             } catch (DAOException e) {
                 e.printStackTrace();
             }
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/Views/AddSubjectAndMarkToStudentMain.jsp");
-            requestDispatcher.forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/Views/AddSubjectAndMarkToStudentMain.jsp").forward(request, response);
         }
 }

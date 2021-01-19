@@ -7,7 +7,7 @@ import exceptions.DAOException;
 import java.util.List;
 
 public interface StudentDAO {
-    List<Student> findAll(boolean swap) throws DAOException;
+    List<Student> findAll(Integer range) throws DAOException;
     void save(Student student) throws DAOException;
     Student getById(int id) throws DAOException;
     void update(Student student) throws DAOException;

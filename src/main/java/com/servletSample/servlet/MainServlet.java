@@ -20,7 +20,7 @@ public class MainServlet extends HttpServlet {
         String path = req.getRequestURI().substring(req.getContextPath().length()).toUpperCase();
 
         Dispatcher dispatcher = new Dispatcher();
-        dispatcher.Dispatch(path, req, resp);
+        dispatcher.dispatch(path, req, resp);
     }
 
     @Override

@@ -7,53 +7,42 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static utils.Constants.LINES_DISPLAY_PER_PAGE;
+
 public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
 
-    private static final String selectAll_Range_Query = "SELECT ID, FIRST_NAME, SECOND_NAME FROM Studschema.STUDENT LIMIT %d0, 10";
-    private PreparedStatement selectAll_Range_PS;
-    private static final String selectAll_Query = "SELECT ID, FIRST_NAME, SECOND_NAME FROM Studschema.STUDENT";
-    private PreparedStatement selectAll_PS;
+    private static final String selectAllStudentsInRangeQuery = String.format("SELECT ID, FIRST_NAME, SECOND_NAME FROM " +
+            "Studschema.STUDENT LIMIT ?, %d", LINES_DISPLAY_PER_PAGE);
+    private PreparedStatement selectAllStudentsInRangePS;
+    private static final String selectAllQuery = "SELECT ID, FIRST_NAME, SECOND_NAME FROM Studschema.STUDENT";
+    private PreparedStatement selectAllPS;
     private static final String insertQuery = "INSERT INTO Studschema.STUDENT(FIRST_NAME, SECOND_NAME) VALUES (?, ?)";
-    private PreparedStatement insert_PS;
+    private PreparedStatement insertPS;
     private static final String getByIdQuery = "SELECT ID, FIRST_NAME, SECOND_NAME FROM Studschema.STUDENT WHERE ID = ?";
-    private  PreparedStatement getbyId_PS;
+    private  PreparedStatement getByIdPS;
     private static final String updateQuery = "UPDATE Studschema.STUDENT SET FIRST_NAME = ?, SECOND_NAME = ? WHERE ID = ?";
-    private PreparedStatement update_PS;
+    private PreparedStatement updatePS;
     private static final String deleteQuery = "DELETE FROM Studschema.STUDENT WHERE ID = ?";
-    private PreparedStatement delete_PS;
-    private static final String paginationQuery = "SELECT COUNT(ID) FROM Studschema.STUDENT";
-    private PreparedStatement pagination_PS;
+    private PreparedStatement deletePS;
+    private static final String paginationQuery = "SELECT COUNT(1) FROM Studschema.STUDENT";
+    private PreparedStatement paginationPS;
 
-    public StudentDAOImpl(int range) throws DAOException {
-        try {
-            selectAll_Range_PS = connection.prepareStatement(String.format(selectAll_Range_Query, range));
-            insert_PS = connection.prepareStatement(insertQuery);
-            getbyId_PS = connection.prepareStatement(getByIdQuery);
-            update_PS = connection.prepareStatement(updateQuery);
-            delete_PS = connection.prepareStatement(deleteQuery);
-            pagination_PS = connection.prepareStatement(paginationQuery);
-        } catch (SQLException e) {
-            throw new DAOException("Exception occurred in MarkDaoConstructor." , e);
-        }
-    }
 
-    public StudentDAOImpl() throws DAOException {
-        try {
-            selectAll_PS = connection.prepareStatement(selectAll_Query);
-            insert_PS = connection.prepareStatement(insertQuery);
-            getbyId_PS = connection.prepareStatement(getByIdQuery);
-            update_PS = connection.prepareStatement(updateQuery);
-            delete_PS = connection.prepareStatement(deleteQuery);
-            pagination_PS = connection.prepareStatement(paginationQuery);
-        } catch (SQLException e) {
-            throw new DAOException("Exception occurred in MarkDaoConstructor." , e);
-        }
-    }
+    public StudentDAOImpl() throws DAOException {}
 
     @Override
-    public List<Student> findAll(boolean swap) throws DAOException {
+    public List<Student> findAll(Integer range) throws DAOException {
         List<Student> listStudents = new ArrayList<>();
-        try (ResultSet rs = (swap) ? selectAll_Range_PS.executeQuery() : selectAll_PS.executeQuery()){
+        ResultSet rs = null;
+        try {
+            if (range != null) {
+            selectAllStudentsInRangePS = connection.prepareStatement(selectAllStudentsInRangeQuery);
+            selectAllStudentsInRangePS.setInt(1, range * 10);
+            rs = selectAllStudentsInRangePS.executeQuery();
+            }else{
+            selectAllPS = connection.prepareStatement(selectAllQuery);
+            rs = selectAllPS.executeQuery();
+            }
             while (rs.next()) {
                 Student student = new Student();
                 student.setId(rs.getInt("ID"));
@@ -63,6 +52,14 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
             }
         }catch(Exception e){
             throw new DAOException("Exception occurred in findAll function", e);
+        }finally {
+            try {
+                if(selectAllStudentsInRangePS != null) selectAllStudentsInRangePS.close();
+                if(selectAllPS != null) selectAllPS.close();
+                rs.close();
+            } catch (Exception e) {
+                throw new DAOException("Exception occurred in findAll function, finally block", e);
+            }
         }
         return listStudents;
     }
@@ -71,11 +68,18 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
     public void save(Student student) throws DAOException {
         try
         {
-            insert_PS.setString(1, student.getFirstName());
-            insert_PS.setString(2, student.getSecondName());
-            insert_PS.executeUpdate();
+            insertPS = connection.prepareStatement(insertQuery);
+            insertPS.setString(1, student.getFirstName());
+            insertPS.setString(2, student.getSecondName());
+            insertPS.executeUpdate();
         }catch(Exception e){
             throw new DAOException("Exception occurred in save function" , e);
+        }finally {
+            try {
+                insertPS.close();
+            } catch (Exception e) {
+                throw new DAOException("Exception occurred in save function, finally block", e);
+            }
         }
     }
 
@@ -84,8 +88,9 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
         Student student = new Student();
         ResultSet rs = null;
         try{
-            getbyId_PS.setInt(1, id);
-            rs = getbyId_PS.executeQuery();
+            getByIdPS = connection.prepareStatement(getByIdQuery);
+            getByIdPS.setInt(1, id);
+            rs = getByIdPS.executeQuery();
             while (rs.next()) {
                 student.setId(rs.getInt("ID"));
                 student.setFirstName(rs.getString("FIRST_NAME"));
@@ -96,6 +101,7 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
         }
         finally {
             try {
+                getByIdPS.close();
                 rs.close();
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in getById function, finally block", e);
@@ -108,12 +114,19 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
     public void update(Student student) throws DAOException {
         try
         {
-            update_PS.setString(1, student.getFirstName());
-            update_PS.setString(2, student.getSecondName());
-            update_PS.setInt(3, student.getId());
-            update_PS.executeUpdate();
+            updatePS = connection.prepareStatement(updateQuery);
+            updatePS.setString(1, student.getFirstName());
+            updatePS.setString(2, student.getSecondName());
+            updatePS.setInt(3, student.getId());
+            updatePS.executeUpdate();
         }catch(Exception e){
             throw new DAOException("Exception occurred in update function." , e);
+        }finally {
+            try {
+                updatePS.close();
+            } catch (Exception e) {
+                throw new DAOException("Exception occurred in update function, finally block", e);
+            }
         }
     }
 
@@ -121,48 +134,45 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
     public void delete(int id) throws DAOException {
         try
         {
-            delete_PS.setInt(1, id);
-            delete_PS.executeUpdate();
+            deletePS = connection.prepareStatement(deleteQuery);
+            deletePS.setInt(1, id);
+            deletePS.executeUpdate();
         }catch(Exception e){
             throw new DAOException("Exception occurred in delete function.", e);
+        }finally {
+            try {
+                deletePS.close();
+            } catch (Exception e) {
+                throw new DAOException("Exception occurred in delete function, finally block", e);
+            }
         }
     }
 
     @Override
     public int pagination() throws DAOException{
         int result = 0;
-        try(ResultSet rs = pagination_PS.executeQuery()){
+        ResultSet rs = null;
+        try{
+            paginationPS = connection.prepareStatement(paginationQuery);
+            rs = paginationPS.executeQuery();
             if (rs.next()) {
                 result = rs.getInt(1);
             }
         }catch(Exception e){
             throw new DAOException("Exception occurred in pagination call StudentDAO" + e.getMessage());
+        }finally {
+        try {
+            paginationPS.close();
+            rs.close();
+        } catch (Exception e) {
+            throw new DAOException("Exception occurred in pagination function, finally block", e);
         }
+    }
         return result;
     }
 
     public void close() throws DAOException {
         DAOException daoException = null;
-        try {
-            insert_PS.close();
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, Insert PS", e);
-        }
-        try {
-            getbyId_PS.close();
-        }catch (Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, getById PS", e);
-        }
-        try {
-            update_PS.close();
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, Update PS", e);
-        }
-        try {
-            delete_PS.close();
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, Delete PS",e);
-        }
         try {
             closeConnection();
         }catch(Exception e) {

@@ -1,12 +1,12 @@
 package utils;
 
+import java.util.ArrayList;
+
+import static utils.Constants.*;
+
 public class Validator {
 
-    public final String EmptyOrNullMessage = "can not be empty";
-    public final int ExpectedLength = 3;
-    public String ErrorMessage = "";
-
-    public boolean NullOrEmptyStringCheck(String param){
+    private boolean nullOrEmptyStringCheck(String param){
         boolean res = false;
         if(param.isEmpty() || param == null){
             res = true;
@@ -14,51 +14,32 @@ public class Validator {
         return res;
     }
 
-    public boolean ContainsOnlyLettersCheck(String param){
-        return !param.chars().allMatch(Character::isLetter);
+    private boolean stringContainsOnlyLetters(String param){
+
+        return !param.matches("[a-zA-Z]+");
     }
 
-    public boolean ContainsOnlyDigitsCheck(String param){
-        return !param.chars().allMatch(Character::isDigit);
+    private boolean stringContainsOnlyDigits(String param){
+        return !param.matches("[0-9]+");
     }
 
-    public boolean VerifyStringLength(String actual, int expected){
+    private boolean verifyStringLength(String actual, int expected){
             return  actual.length() < expected;
     }
 
-    public boolean CheckFieldForErrors(Validator validator, String name) {
-        boolean ifErrorFirstName;
-        ifErrorFirstName = validator.NullOrEmptyStringCheck(name);
-        if(!ifErrorFirstName)
-        {
-            ifErrorFirstName = validator.ContainsOnlyLettersCheck(name);
-            if (!ifErrorFirstName)
-            {
-                ifErrorFirstName = validator.VerifyStringLength(name, validator.ExpectedLength);
-                if (ifErrorFirstName)
-                {
-                    ErrorMessage = String.format("Inserted value has %d characters. Expected minimal length is %d.",
-                            name.length(), validator.ExpectedLength);
-                }
-            }else
-            {
-                ErrorMessage = "Only letters are allowed";
-            }
-        }else
-        {
-            ErrorMessage = "Input field " + validator.EmptyOrNullMessage;
-        }
-        return ifErrorFirstName;
-    }
+    public ArrayList<String> checkFieldForErrors(String name) {
+        ArrayList<String> listOfErrors = new ArrayList <>();
 
-    public int GetNumberOfPages(int number){
-       int pages = 0;
-        if(number > 9){
-            pages = number / 10;
-            if(number % 10 != 0){
-                pages+=1;
-            }
+        if(this.nullOrEmptyStringCheck(name)) {
+            listOfErrors.add("Input field " + EMPTY_OR_NULL_MESSAGE);
+
         }
-        return pages;
+        if(this.stringContainsOnlyLetters(name)) {
+            listOfErrors.add(ERROR_MESSAGE_LETTERS);
+        }
+        if(this.verifyStringLength(name, EXPECTED_MINIMAL_LENGTH)) {
+            listOfErrors.add(String.format(ERROR_MESSAGE_STRING_LENGTH, name.length(), EXPECTED_MINIMAL_LENGTH));
+        }
+        return listOfErrors;
     }
 }

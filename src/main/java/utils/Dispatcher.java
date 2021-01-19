@@ -8,79 +8,79 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class Dispatcher {
-    public void Dispatch(String  path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    public void dispatch(String  path, HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         switch (path) {
             case "/":
                 MainViewController mainViewController = new MainViewController();
-                mainViewController.OpenPage(req, resp);
+                mainViewController.openPage(req, resp);
                 break;
             case "/HELLO":
                 HelloController helloController = new HelloController();
-                helloController.OpenPage(req, resp);
+                helloController.openPage(req, resp);
                 break;
             case "/ADDNEWSTUDENT":
                 AddNewStudentMainController addNewStudentMainController = new AddNewStudentMainController();
-                addNewStudentMainController.OpenPage(req, resp);
+                addNewStudentMainController.openPage(req, resp);
                 break;
             case "/ADDNEWSTUDENT2":
                 AddNewStudentController addNewStudentController = new AddNewStudentController();
-                addNewStudentController.OpenPage(req, resp);
+                addNewStudentController.openPage(req, resp);
                 break;
             case "/ADDNEWDATATOSTUDENT":
                 AddSubjectAndMarkToStudentMainController addSubjectAndMarkToStudentMainController =
                         new AddSubjectAndMarkToStudentMainController();
-                addSubjectAndMarkToStudentMainController.OpenPage(req, resp);
+                addSubjectAndMarkToStudentMainController.openPage(req, resp);
                 break;
             case "/ADDNEWDATATOSTUDENT2":
                 AddSubjectAndMarkToStudentController addSubjectAndMarkToStudentController =
                         new AddSubjectAndMarkToStudentController();
-                addSubjectAndMarkToStudentController.OpenPage(req, resp);
+                addSubjectAndMarkToStudentController.openPage(req, resp);
                 break;
             case "/DELETESTUDENT":
                 DeleteStudentController deleteStudentController = new DeleteStudentController();
-                deleteStudentController.OpenPage(req, resp);
+                deleteStudentController.openPage(req, resp);
                 break;
             case "/EDITSTUDENT":
                 EditStudentMainController editStudentMainController = new EditStudentMainController();
-                editStudentMainController.OpenPage(req, resp);
+                editStudentMainController.openPage(req, resp);
                 break;
             case "/EDITSTUDENT2":
                 EditStudentController editStudentController = new EditStudentController();
-                editStudentController.OpenPage(req, resp);
+                editStudentController.openPage(req, resp);
                 break;
             case "/EDITSUBJECTSERVLET":
                 EditSubjectMainController editSubjectMainController = new EditSubjectMainController();
-                editSubjectMainController.OpenPage(req, resp);
+                editSubjectMainController.openPage(req, resp);
                 break;
             case "/EDITSUBJECT2":
                 EditSubjectController editSubjectController = new EditSubjectController();
-                editSubjectController.OpenPage(req, resp);
+                editSubjectController.openPage(req, resp);
                 break;
             case "/STUDENTS":
                 ReturnAllStudentsController returnAllStudentsController = new ReturnAllStudentsController();
-                returnAllStudentsController.OpenPage(req, resp);
+                returnAllStudentsController.openPage(req, resp);
                 break;
             case "/RETURNDATAFORSTUDENT2":
                 ReturnAllDataForStudent2Controller returnAllDataForStudent2Controller =
                         new ReturnAllDataForStudent2Controller();
-                returnAllDataForStudent2Controller.OpenPage(req, resp);
+                returnAllDataForStudent2Controller.openPage(req, resp);
                 break;
             case "/SUBJECTS":
                 ReturnAllSubjectsController returnAllSubjectsController = new ReturnAllSubjectsController();
-                returnAllSubjectsController.OpenPage(req, resp);
+                returnAllSubjectsController.openPage(req, resp);
                 break;
             case "/RETURNDATAFORSTUDENT":
                 ReturnDataForOneStudentController returnDataForOneStudentController =
                         new ReturnDataForOneStudentController();
-                returnDataForOneStudentController.OpenPage(req, resp);
+                returnDataForOneStudentController.openPage(req, resp);
                 break;
             case "/DATA":
                 ReturnAllDataController returnAllDataController = new ReturnAllDataController();
-                returnAllDataController.OpenPage(req, resp);
+                returnAllDataController.openPage(req, resp);
                 break;
             default:
                 ErrorController errorController = new ErrorController();
-                errorController.OpenPage(req, resp);
+                errorController.openPage(req, resp);
                 break;
         }
     }

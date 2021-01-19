@@ -16,12 +16,12 @@
         <th>Subject</th>
         <th>Edit</th>
     </tr>
-    <% for( Subject subject : list){%>
+    <% for(Subject subject : list){%>
     <tr>
         <td><%= subject.getId() %></td>
         <td><%= subject.getSubject() %></td>
         <td>
-            <a href='EditSubjectServlet?id=<%=subject.getId()%>'>edit</a>
+            <a href='/EditSubjectServlet?id=<%=subject.getId()%>'>edit</a>
         </td>
     </tr>
     <%}%>
@@ -30,9 +30,9 @@
     <a href="/"><input type= "button" value= "Return to start page"></a>
 </p>
 </body>
-<footer>
+<footer><%if(Integer.parseInt(pages) > 1){%>
     <%for(int i = 0; i < Integer.parseInt(pages); i++){%>
     <a href='/subjects?start=<%=i%>'><input type="button" value="<%=i + 1%>" style = "padding: 5px 7px"/></a>
-    <%}%>
+    <%}}%>
 </footer>
 </html>

@@ -4,9 +4,8 @@ import dao.entities.impl.SubjectDAOImpl;
 import dao.interfaces.SubjectDAO;
 import entities.Subject;
 import exceptions.DAOException;
-import utils.Validator;
+import utils.Paginator;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,27 +14,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReturnAllSubjectsController {
-    Validator validator = new Validator();
-    public void OpenPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    Paginator paginator = new Paginator();
+    public void openPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         int start =0;
         try {
             try{
                 start = Integer.parseInt(request.getParameter("start"));
             }catch(Exception e){}
 
-            SubjectDAO subjectDAO = new SubjectDAOImpl(start);
+            SubjectDAO subjectDAO = new SubjectDAOImpl();
             List<Subject> listSubjects = new ArrayList<>();
-            listSubjects.addAll(subjectDAO.findAll(true));
+            listSubjects.addAll(subjectDAO.findAll(start));
             request.setAttribute("subjects", listSubjects);
-            String pages = "" + validator.GetNumberOfPages(subjectDAO.pagination());
+            String pages = "" + paginator.getNumberOfPages(subjectDAO.pagination());
             request.setAttribute("pages", pages);
             subjectDAO.close();
         } catch (
             DAOException e) {
             e.printStackTrace();
     }
-
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/Views/ReturnAllSubjects.jsp");
-        requestDispatcher.forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/Views/ReturnAllSubjects.jsp").forward(request, response);
     }
 }

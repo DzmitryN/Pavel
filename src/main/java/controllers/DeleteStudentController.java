@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class DeleteStudentController {
-    public void OpenPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void openPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             StudentDAO studentDAO = new StudentDAOImpl();
             studentDAO.delete(id);
 
-            response.sendRedirect("students");
+            request.getRequestDispatcher("/students").forward(request, response);
             studentDAO.close();
         }catch (DAOException e) {
             e.printStackTrace();

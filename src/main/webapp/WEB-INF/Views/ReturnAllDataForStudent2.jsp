@@ -28,15 +28,15 @@
     <%}%>
 </table>
 <p>
-    <a href="returnDataForStudent"><input type= "button" value= "Return to Select Student Page"></a>
+    <a href="/returnDataForStudent"><input type= "button" value= "Return to Select Student Page"></a>
 </p>
 <p>
     <a href="/"><input type= "button" value= "Return to start page"></a>
 </p>
 </body>
-<footer>
+<footer><%if(Integer.parseInt(pages) > 1){%>
     <%for(int i = 0; i < Integer.parseInt(pages); i++){%>
     <a href='/ReturnDataForStudent2?start=<%=i%>&student=<%=sId%>'><input type="button" value="<%=i + 1%>" style = "padding: 5px 7px"/></a>
-    <%}%>
+    <%}}%>
 </footer>
 </html>

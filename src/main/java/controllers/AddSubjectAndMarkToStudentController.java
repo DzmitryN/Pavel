@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class AddSubjectAndMarkToStudentController {
-    public void OpenPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void openPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         try{
             int sId=Integer.parseInt(request.getParameter("student"));
             int sbId=Integer.parseInt(request.getParameter("subject"));
@@ -26,7 +26,7 @@ public class AddSubjectAndMarkToStudentController {
             Marks_SheetDAO marks_sheetDAO = new MarkSheetDAOImpl();
             marks_sheetDAO.save(marksSheet);
 
-            response.sendRedirect("data");
+            request.getRequestDispatcher("/data").forward(request, response);
             marks_sheetDAO.close();
 
         } catch (DAOException e) {

@@ -7,11 +7,11 @@ import entities.Student;
 import exceptions.DAOException;
 import utils.Validator;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,38 +19,35 @@ public class EditStudentController {
 
     private Validator validator = new Validator();
 
-    public void OpenPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        boolean ifErrorFirstName;
-        boolean ifErrorSecondName;
-        Map<String, String> errors = new HashMap<>();
+    public void openPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+        Map<String, ArrayList<String>> errors = new HashMap <>();
 
         String name=request.getParameter("First Name");
         String secondName=request.getParameter("Second Name");
         int id = Integer.parseInt(request.getParameter("id").trim());
 
-        ifErrorFirstName = validator.CheckFieldForErrors(validator, name);
-        if(ifErrorFirstName){
-            errors.put("firstname", validator.ErrorMessage);
+        ArrayList<String> firstNameErrors= validator.checkFieldForErrors(name);
+        if(firstNameErrors!= null && firstNameErrors.size() > 0){
+            errors.put("firstName", firstNameErrors);
         }
 
-        ifErrorSecondName = validator.CheckFieldForErrors(validator, secondName);
-        if(ifErrorSecondName){
-            errors.put("secondname", validator.ErrorMessage);
+        ArrayList<String> lastNameErrors = validator.checkFieldForErrors(secondName);
+        if(lastNameErrors != null && lastNameErrors.size() > 0 ){
+            errors.put("secondName", lastNameErrors);
         }
 
-        if(!ifErrorFirstName && !ifErrorSecondName) {
+        if(errors.size() == 0) {
             try {
                 Student student = new Student();
                 student.setId(id);
                 student.setFirstName(name);
                 student.setSecondName(secondName);
-                request.setAttribute("errorPresent", "false");
                 StudentDAO studentDAO = new StudentDAOImpl();
                 studentDAO.update(student);
 
-                response.sendRedirect("students");
+                request.getRequestDispatcher("/students").forward(request, response);
                 studentDAO.close();
-
             } catch (DAOException e) {
                 e.printStackTrace();
             }
@@ -62,9 +59,7 @@ public class EditStudentController {
                 request.setAttribute("studentDTO", student);
                 studentDAO.close();
                 request.setAttribute("errors", errors);
-                request.setAttribute("errorPresent", "true");
-                RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/Views/EditStudentMain.jsp");
-                requestDispatcher.forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/Views/EditStudentMain.jsp").forward(request, response);
             } catch (DAOException e) {
                 e.printStackTrace();
             }

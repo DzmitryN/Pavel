@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>Return all data for selected Student</h1>
-<form action='returnDataForStudent2' method='POST'>
+<form action='/returnDataForStudent2' method='POST'>
     <table>
         <tr>
             <td>Student:</td>

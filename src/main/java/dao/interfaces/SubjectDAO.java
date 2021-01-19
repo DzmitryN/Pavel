@@ -7,7 +7,7 @@ import exceptions.DAOException;
 import java.util.List;
 
 public interface SubjectDAO {
-    List<Subject> findAll(boolean swap) throws DAOException;
+    List<Subject> findAll(Integer range) throws DAOException;
     void save(Subject subject) throws DAOException;
     Subject getById(int id) throws DAOException;
     void update(Subject subject) throws DAOException;
