@@ -32,7 +32,7 @@ public class ReturnAllDataForStudent2Controller {
             List<MarksSheet> list = new ArrayList<>();
             list.addAll(marks_sheetDAO.getById(sId, start));
             request.setAttribute("MS_DTO", list);
-            String pages = "" + paginator.getNumberOfPages(marks_sheetDAO.pagination_ById(sId));
+            String pages = "" + paginator.getNumberOfPages(marks_sheetDAO.paginationByStudentId(sId));
             request.setAttribute("pages", pages);
             request.setAttribute("StudentId", "" + sId);
             marks_sheetDAO.close();

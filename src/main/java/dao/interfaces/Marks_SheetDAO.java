@@ -14,7 +14,7 @@ public interface Marks_SheetDAO {
     void update(MarksSheet mark);
     void delete(int id);
     int pagination() throws DAOException;
-    int pagination_ById(int id) throws DAOException;
+    int paginationByStudentId(int id) throws DAOException;
     void close() throws DAOException;
 
 }

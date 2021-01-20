@@ -1,4 +1,5 @@
 package dao.entities.impl;
+import connector.ConnectionPool;
 import exceptions.DAOException;
 import connector.AbstractDAO;
 import dao.interfaces.StudentDAO;
@@ -9,7 +10,7 @@ import java.util.List;
 
 import static utils.Constants.LINES_DISPLAY_PER_PAGE;
 
-public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
+public class StudentDAOImpl /*extends AbstractDAO*/ implements StudentDAO {
 
     private static final String selectAllStudentsInRangeQuery = String.format("SELECT ID, FIRST_NAME, SECOND_NAME FROM " +
             "Studschema.STUDENT LIMIT ?, %d", LINES_DISPLAY_PER_PAGE);
@@ -34,7 +35,11 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
     public List<Student> findAll(Integer range) throws DAOException {
         List<Student> listStudents = new ArrayList<>();
         ResultSet rs = null;
+        Connection connection = null;
         try {
+            System.out.println("Student DAO find all, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
+            connection = ConnectionPool.jdbcConnectionPool.getConnection();
+            connection.setAutoCommit(false);
             if (range != null) {
             selectAllStudentsInRangePS = connection.prepareStatement(selectAllStudentsInRangeQuery);
             selectAllStudentsInRangePS.setInt(1, range * 10);
@@ -57,6 +62,7 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
                 if(selectAllStudentsInRangePS != null) selectAllStudentsInRangePS.close();
                 if(selectAllPS != null) selectAllPS.close();
                 rs.close();
+                if(connection != null) connection.close();
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in findAll function, finally block", e);
             }
@@ -66,8 +72,12 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
 
     @Override
     public void save(Student student) throws DAOException {
+        Connection connection = null;
         try
         {
+            System.out.println("Student DAO save, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
+            connection = ConnectionPool.jdbcConnectionPool.getConnection();
+            connection.setAutoCommit(false);
             insertPS = connection.prepareStatement(insertQuery);
             insertPS.setString(1, student.getFirstName());
             insertPS.setString(2, student.getSecondName());
@@ -77,6 +87,7 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
         }finally {
             try {
                 insertPS.close();
+                if(connection != null) connection.close();
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in save function, finally block", e);
             }
@@ -87,7 +98,11 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
     public Student getById(int id) throws DAOException {
         Student student = new Student();
         ResultSet rs = null;
+        Connection connection = null;
         try{
+            System.out.println("Student DAO get by id, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
+            connection = ConnectionPool.jdbcConnectionPool.getConnection();
+            connection.setAutoCommit(false);
             getByIdPS = connection.prepareStatement(getByIdQuery);
             getByIdPS.setInt(1, id);
             rs = getByIdPS.executeQuery();
@@ -103,6 +118,7 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
             try {
                 getByIdPS.close();
                 rs.close();
+                if(connection != null) connection.close();
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in getById function, finally block", e);
             }
@@ -112,8 +128,12 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
 
     @Override
     public void update(Student student) throws DAOException {
+        Connection connection = null;
         try
         {
+            System.out.println("Student DAO update, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
+            connection = ConnectionPool.jdbcConnectionPool.getConnection();
+            connection.setAutoCommit(false);
             updatePS = connection.prepareStatement(updateQuery);
             updatePS.setString(1, student.getFirstName());
             updatePS.setString(2, student.getSecondName());
@@ -124,6 +144,7 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
         }finally {
             try {
                 updatePS.close();
+                if(connection != null) connection.close();
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in update function, finally block", e);
             }
@@ -132,8 +153,11 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
 
     @Override
     public void delete(int id) throws DAOException {
+        Connection connection = null;
         try
         {
+            System.out.println("Student DAO delete, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
+            connection = ConnectionPool.jdbcConnectionPool.getConnection();
             deletePS = connection.prepareStatement(deleteQuery);
             deletePS.setInt(1, id);
             deletePS.executeUpdate();
@@ -142,6 +166,7 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
         }finally {
             try {
                 deletePS.close();
+                if(connection != null) connection.close();
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in delete function, finally block", e);
             }
@@ -152,7 +177,10 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
     public int pagination() throws DAOException{
         int result = 0;
         ResultSet rs = null;
+        Connection connection = null;
         try{
+            System.out.println("Student DAO pagination, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
+            connection = ConnectionPool.jdbcConnectionPool.getConnection();
             paginationPS = connection.prepareStatement(paginationQuery);
             rs = paginationPS.executeQuery();
             if (rs.next()) {
@@ -164,6 +192,7 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
         try {
             paginationPS.close();
             rs.close();
+            if(connection != null) connection.close();
         } catch (Exception e) {
             throw new DAOException("Exception occurred in pagination function, finally block", e);
         }
@@ -174,7 +203,8 @@ public class StudentDAOImpl extends AbstractDAO implements StudentDAO {
     public void close() throws DAOException {
         DAOException daoException = null;
         try {
-            closeConnection();
+            //closeConnection();
+            //connection.close();
         }catch(Exception e) {
             daoException = new DAOException("Exception occurred in Close function, closeConnection block",e);
         }

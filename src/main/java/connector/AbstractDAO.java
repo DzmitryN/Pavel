@@ -1,6 +1,7 @@
 package connector;
 
 import exceptions.DAOException;
+import org.h2.jdbcx.JdbcConnectionPool;
 
 
 import java.io.InputStream;
@@ -11,6 +12,7 @@ import java.util.Properties;
 public class AbstractDAO {
 
   protected  Connection connection;
+  protected JdbcConnectionPool jdbcConnectionPool;
 
 
      public AbstractDAO() throws DAOException {
@@ -24,8 +26,12 @@ public class AbstractDAO {
 
             Class.forName (properties.getProperty("Driver"));
 
-            connection = DriverManager.getConnection(properties.getProperty("URL"),
-                    properties.getProperty("User"), properties.getProperty("Password"));
+            //connection = DriverManager.getConnection(properties.getProperty("URL"),
+                    //properties.getProperty("User"), properties.getProperty("Password"));
+            //jdbcConnectionPool = JdbcConnectionPool.create(properties.getProperty("URL"),
+                   // properties.getProperty("User"), properties.getProperty("Password"));
+            //connection = jdbcConnectionPool.getConnection();
+            //connection.setAutoCommit(false);
 
             if (connection != null) {
                 System.out.println("Connected!");
@@ -44,6 +50,8 @@ public class AbstractDAO {
             }
         }
      }
+
+
 
      protected void closeConnection() throws SQLException{
         connection.close();
