@@ -1,7 +1,6 @@
 package dao.entities.impl;
 
-
-import connector.ConnectionPool;
+import connector.DataSource;
 import exceptions.DAOException;
 import connector.AbstractDAO;
 import dao.interfaces.Marks_SheetDAO;
@@ -58,19 +57,25 @@ public class MarkSheetDAOImpl /*extends AbstractDAO*/ implements Marks_SheetDAO 
             "join Studschema.mark m\n" +
             "on ms.mark_id = m.id";
     private PreparedStatement paginationPS;
+    Connection connection;
 
-    public MarkSheetDAOImpl() throws DAOException {}
+
+    public MarkSheetDAOImpl() throws DAOException {
+        try {
+            connection = DataSource.getInstance().getConnection();
+        }catch(Exception e){
+            throw  new DAOException("Exception occurred in MarkSheetDAOImpl constructor: ", e);
+        }
+    }
 
     @Override
     public List<MarksSheet> findAll(int range) throws DAOException {
         List<MarksSheet> marksSheets = new ArrayList<>();
         ResultSet rs = null;
-        Connection connection = null;
         try{
-            System.out.println("MarkSheetDAO find all, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
-            connection = ConnectionPool.jdbcConnectionPool.getConnection();
             selectAllPS=connection.prepareStatement(selectAllQuery);
             selectAllPS.setInt(1, range * 10);
+            System.out.println("selectAllPS created.");
             rs = selectAllPS.executeQuery();
             while (rs.next()) {
                 MarksSheet marksSheetObject = getMarksSheetObject(rs);
@@ -84,52 +89,34 @@ public class MarkSheetDAOImpl /*extends AbstractDAO*/ implements Marks_SheetDAO 
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in findAll function, finally block", e);
             }
-            try{
-                selectAllPS.close();
-                if(connection != null) connection.close();
-            }catch (Exception ex){
-                throw new DAOException("Exception occurred in selectAllPS Close function", ex);
-            }
         }
         return marksSheets;
     }
 
     @Override
     public void save(MarksSheet mark) throws DAOException{
-        Connection connection = null;
         try
         {
-            System.out.println("MarkSheetDAO save, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
-            connection = ConnectionPool.jdbcConnectionPool.getConnection();
             savePS = connection.prepareStatement(saveQuery);
             savePS.setInt(1, mark.getStudent_id());
             savePS.setInt(2, mark.getSubject_id());
             savePS.setInt(3, mark.getMark_id());
+            System.out.println("savePS created.");
             savePS.executeUpdate();
         }catch(Exception e){
             throw new DAOException("Exception occurred in save function" , e);
-        }finally{
-            try{
-                savePS.close();
-                if(connection != null) connection.close();
-            }catch (Exception ex){
-                throw new DAOException("Exception occurred in savePS Close function", ex);
-            }
         }
-
     }
 
     @Override
     public List<MarksSheet> getById(int id, int start) throws DAOException {
         List<MarksSheet> marks_sheets = new ArrayList<>();
         ResultSet rs = null;
-        Connection connection = null;
         try{
-            System.out.println("MarkSheetDAO get by id, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
-            connection = ConnectionPool.jdbcConnectionPool.getConnection();
             getByIdPS = connection.prepareStatement(getByIdQuery);
             getByIdPS.setInt(1, id);
             getByIdPS.setInt(2, start * 10);
+            System.out.println("getByIdPS created.");
             rs = getByIdPS.executeQuery();
             while (rs.next()) {
                 MarksSheet marks_sheet = getMarksSheetObject(rs);
@@ -144,12 +131,6 @@ public class MarkSheetDAOImpl /*extends AbstractDAO*/ implements Marks_SheetDAO 
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in getById function, finally block", e);
             }
-            try{
-                getByIdPS.close();
-                if(connection != null) connection.close();
-            }catch (Exception ex){
-                throw new DAOException("Exception occurred in getByIdPS Close function", ex);
-            }
         }
         return marks_sheets;
     }
@@ -158,11 +139,9 @@ public class MarkSheetDAOImpl /*extends AbstractDAO*/ implements Marks_SheetDAO 
     public int pagination() throws DAOException{
         int result = 0;
         ResultSet rs = null;
-        Connection connection = null;
         try{
-            System.out.println("MarkSheetDAO pagination, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
-            connection = ConnectionPool.jdbcConnectionPool.getConnection();
             paginationPS = connection.prepareStatement(paginationQuery);
+            System.out.println("paginationPS created.");
             rs = paginationPS.executeQuery();
             if (rs.next()) {
                 result = rs.getInt(1);
@@ -175,12 +154,6 @@ public class MarkSheetDAOImpl /*extends AbstractDAO*/ implements Marks_SheetDAO 
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in getById function, finally block", e);
             }
-            try{
-                paginationPS.close();
-                if(connection != null) connection.close();
-            }catch (Exception ex){
-                throw new DAOException("Exception occurred in paginationPS Close function", ex);
-            }
         }
         return result;
     }
@@ -189,12 +162,10 @@ public class MarkSheetDAOImpl /*extends AbstractDAO*/ implements Marks_SheetDAO 
     public int paginationByStudentId(int id) throws DAOException{
         int result = 0;
         ResultSet rs = null;
-        Connection connection = null;
         try{
-        System.out.println("MarkSheetDAO paginationByStudentId, number of free connections: " + ConnectionPool.jdbcConnectionPool.getActiveConnections());
-        connection = ConnectionPool.jdbcConnectionPool.getConnection();
         getNumberOfPagesPS = connection.prepareStatement(getNumberOfPagesQuery);
         getNumberOfPagesPS.setInt(1, id);
+        System.out.println("getNumberOfPagesPS created.");
         rs = getNumberOfPagesPS.executeQuery();
             if (rs.next()) {
                 result = rs.getInt(1);
@@ -208,32 +179,56 @@ public class MarkSheetDAOImpl /*extends AbstractDAO*/ implements Marks_SheetDAO 
             } catch (Exception e) {
                 throw new DAOException("Exception occurred in getById function, finally block", e);
             }
-            try{
-                getNumberOfPagesPS.close();
-                if(connection != null) connection.close();
-            }catch (Exception ex){
-                throw new DAOException("Exception occurred in getNumberOfPagesPS Close function", ex);
-            }
         }
         return result;
     }
 
     @Override
-    public void update(MarksSheet mark){
-
-    }
+    public void update(MarksSheet mark){}
 
     @Override
-    public void delete(int id){
-
-    }
+    public void delete(int id){}
 
     public void close() throws DAOException {
-        try {
-            //closeConnection();
-            //connection.close();
+        DAOException daoException = null;
+        if(selectAllPS != null){ try{
+            selectAllPS.close();
+            System.out.println("selectAllPS closed");
         }catch(Exception e) {
-            throw new DAOException("Exception occurred in MarkSheetDAO Close function, closeConnection block",e);
+            daoException = new DAOException("Exception occurred in Close function, selectAllInRangePS block", e);
+        }}
+        if(getByIdPS != null){ try{
+            getByIdPS.close();
+            System.out.println("getByIdPS closed");
+        }catch(Exception e) {
+            daoException = new DAOException("Exception occurred in Close function, getByIdPS block", e);
+        }}
+        if(getNumberOfPagesPS != null){ try{
+            getNumberOfPagesPS.close();
+            System.out.println("getNumberOfPagesPS closed");
+        }catch(Exception e) {
+            daoException = new DAOException("Exception occurred in Close function, getNumberOfPagesPS block", e);
+        }}
+        if(savePS != null){ try{
+            savePS.close();
+            System.out.println("savePS closed");
+        }catch(Exception e) {
+            daoException = new DAOException("Exception occurred in Close function, savePS block", e);
+        }}
+        if(paginationPS != null){ try{
+            paginationPS.close();
+            System.out.println("paginationPS closed");
+        }catch(Exception e) {
+            daoException = new DAOException("Exception occurred in Close function, paginationPS block", e);
+        }}
+        if(connection != null){ try {
+            //closeConnection();
+            connection.close();
+        }catch(Exception e) {
+            daoException = new DAOException("Exception occurred in MarkSheetDAO Close function, closeConnection block", e);
+        }}
+        if(daoException != null){
+            throw new DAOException(daoException);
         }
     }
 
