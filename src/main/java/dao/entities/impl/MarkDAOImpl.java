@@ -4,9 +4,16 @@ import connector.DataSource;
 import exceptions.DAOException;
 import dao.interfaces.MarkDAO;
 import entities.Mark;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import utils.ClosePS;
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MarkDAOImpl /*extends AbstractDAO*/ implements MarkDAO {
 
@@ -20,13 +27,20 @@ public class MarkDAOImpl /*extends AbstractDAO*/ implements MarkDAO {
     private PreparedStatement updatePS;
     private static final String deleteQuery = "DELETE FROM Studschema.Mark WHERE ID = ?";
     private PreparedStatement deletePS;
+    private Map<String, PreparedStatement> setOfPs = new HashMap<>();
     Connection connection;
+    private static final Logger logger = LogManager.getLogger(MarkDAOImpl.class);
+    static{
+        BasicConfigurator.configure();
+    }
 
 
     public MarkDAOImpl() throws DAOException {
         try {
             connection = DataSource.getInstance().getConnection();
+            logger.info("Connection created");
         }catch(Exception e){
+            logger.error("Exception occurred in MarkDAOImpl constructor: ", e);
             throw  new DAOException("Exception occurred in MarkDAOImpl constructor: ", e);
         }
     }
@@ -38,7 +52,8 @@ public class MarkDAOImpl /*extends AbstractDAO*/ implements MarkDAO {
         ResultSet rs = null;
         try  {
             selectAllPS = connection.prepareStatement(selectAllQuery);
-            System.out.println("selectAllPS created.");
+            setOfPs.put("selectAllPS", selectAllPS);
+            logger.info("selectAllPS created.");
             rs = selectAllPS.executeQuery();
             while (rs.next()) {
                 Mark mark = new Mark();
@@ -47,11 +62,13 @@ public class MarkDAOImpl /*extends AbstractDAO*/ implements MarkDAO {
                 marks.add(mark);
             }
         } catch (Exception e) {
+            logger.error("Exception occurred in findAll function", e);
             throw new DAOException("Exception occurred in findAll function", e);
         }finally {
             try {
                 rs.close();
             }catch(Exception e){
+                logger.error("Exception occurred in findAll function rs close block", e);
                 throw new DAOException("Exception occurred in findAll function rs close block", e);
             }
         }
@@ -63,10 +80,12 @@ public class MarkDAOImpl /*extends AbstractDAO*/ implements MarkDAO {
     public void save(Mark mark) throws DAOException {
         try{
             insertPS = connection.prepareStatement(insertQuery);
+            setOfPs.put("insertPS", insertPS);
             insertPS.setInt(1, mark.getMark());
-            System.out.println("insertPS created.");
+            logger.info("insertPS created.");
             insertPS.executeUpdate();
         }catch (Exception e) {
+            logger.error("Exception occurred in save function" , e);
              throw new DAOException("Exception occurred in save function" , e);
         }
     }
@@ -77,20 +96,23 @@ public class MarkDAOImpl /*extends AbstractDAO*/ implements MarkDAO {
         ResultSet rs = null;
         try{
             getByIdPS = connection.prepareStatement(getByIdQuery);
+            setOfPs.put("getByIdPS", getByIdPS);
             getByIdPS.setInt(1, id);
-            System.out.println("getByIdPS created.");
+            logger.info("getByIdPS created.");
             rs = getByIdPS.executeQuery();
             while (rs.next()) {
                 mark.setID(rs.getInt("ID"));
                 mark.setMark(rs.getInt("Mark"));
             }
         } catch (Exception e) {
+            logger.error("Exception occurred in getById function", e);
             throw new DAOException("Exception occurred in getById function", e);
         }
         finally {
             try {
                 rs.close();
             } catch (Exception e) {
+                logger.error("Exception occurred in getById function, finally block", e);
                     throw new DAOException("Exception occurred in getById function, finally block", e);
                 }
             }
@@ -102,11 +124,13 @@ public class MarkDAOImpl /*extends AbstractDAO*/ implements MarkDAO {
         try
         {
             updatePS = connection.prepareStatement(updateQuery);
+            setOfPs.put("updatePS", updatePS);
             updatePS.setInt(1, mark.getMark());
             updatePS.setInt(2, mark.getID());
-            System.out.println("updatePS created.");
+            logger.info("updatePS created.");
             updatePS.executeUpdate();
         } catch (Exception e) {
+            logger.error("Exception occurred in update function." , e);
             throw new DAOException("Exception occurred in update function." , e);
         }
     }
@@ -115,53 +139,20 @@ public class MarkDAOImpl /*extends AbstractDAO*/ implements MarkDAO {
     public void delete(int id) throws DAOException {
         try{
             deletePS = connection.prepareStatement(deleteQuery);
+            setOfPs.put("deletePS", deletePS);
             deletePS.setInt(1, id);
-            System.out.println("deletePS created.");
+            logger.info("deletePS created.");
             deletePS.executeUpdate();
         } catch (Exception e) {
+            logger.error("Exception occurred in delete function.", e);
             throw new DAOException("Exception occurred in delete function.", e);
         }
     }
 
     public void close() throws DAOException {
-        DAOException daoException = null;
-        if(selectAllPS != null){ try{
-            selectAllPS.close();
-            System.out.println("selectAllPS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, selectAllInRangePS block",e);
-        }}
-        if(insertPS != null) {try {
-            insertPS.close();
-            System.out.println("insertPS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, Insert PS block", e);
-        }}
-        if(getByIdPS != null) {try {
-            getByIdPS.close();
-            System.out.println("getByIdPS closed");
-        }catch (Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, getByIdPS block", e);
-        }}
-        if(updatePS != null) {try {
-            updatePS.close();
-            System.out.println("updatePS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, updatePS block", e);
-        }}
-        if(deletePS != null){ try{
-            deletePS.close();
-            System.out.println("deletePS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, selectAllInRangePS block",e);
-        }}
-        if(connection != null){try {
-            //closeConnection();
-            connection.close();
-            System.out.println("Connection closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, closeConnection block",e);
-        }}
+        DAOException daoException;
+        ClosePS closeAllPreparedStatements = new ClosePS();
+        daoException = closeAllPreparedStatements.closePS(setOfPs, connection);
         if(daoException != null){
             throw new DAOException(daoException);
         }

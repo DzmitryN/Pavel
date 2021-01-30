@@ -4,9 +4,16 @@ import connector.DataSource;
 import exceptions.DAOException;
 import dao.interfaces.SubjectDAO;
 import entities.Subject;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import utils.ClosePS;
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static utils.Constants.LINES_DISPLAY_PER_PAGE;
 
@@ -27,14 +34,20 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
     private PreparedStatement deletePS;
     private static final String paginationQuery = "SELECT COUNT(ID) FROM Studschema.SUBJECT";
     private PreparedStatement paginationPS;
-    Connection connection;
+    private Map<String, PreparedStatement> setOfPs = new HashMap<>();
+    Connection connection ;
+    private static final Logger logger = LogManager.getLogger(SubjectDAOImpl.class);
+    static{
+        BasicConfigurator.configure();
+    }
 
 
     public SubjectDAOImpl() throws DAOException {
         try {
             connection = DataSource.getInstance().getConnection();
-            System.out.println("Connection created.");
+            logger.info("Connection created.");
         }catch(Exception e){
+            logger.error("Exception occurred in SubjectDAOImpl constructor: ", e);
             throw  new DAOException("Exception occurred in SubjectDAOImpl constructor: ", e);
         }
     }
@@ -46,11 +59,14 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
         try{
             if (range != null) {
                 selectAllInRangePS = connection.prepareStatement(selectAllInRangeQuery);
-                System.out.println("selectAllInRangePS created.");
+                setOfPs.put("selectAllInRangePS", selectAllInRangePS);
+                logger.info("selectAllInRangePS created.");
                 selectAllInRangePS.setInt(1, range * 10);
                 rs = selectAllInRangePS.executeQuery();
             }else{
                 selectAllPS = connection.prepareStatement(selectAllQuery);
+                logger.info("selectAllPS created");
+                setOfPs.put("selectAllPS", selectAllPS);
                 rs = selectAllPS.executeQuery();
             }
             while (rs.next()) {
@@ -60,11 +76,13 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
                 listSubjects.add(subject);
             }
         }catch(Exception e){
+            logger.error("Exception occurred in findAll function", e);
             throw new DAOException("Exception occurred in findAll function", e);
         }finally {
             try {
                 rs.close();
             } catch (Exception e) {
+                logger.error("Exception occurred in findAll function, finally block", e);
                 throw new DAOException("Exception occurred in findAll function, finally block", e);
             }
         }
@@ -76,10 +94,12 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
         try
         {
             insertPS = connection.prepareStatement(insertQuery);
-            System.out.println("insertPS created");
+            setOfPs.put("insertPS", insertPS);
+            logger.info("insertPS created");
             insertPS.setObject(1, subject.getSubject());
             insertPS.executeUpdate();
         }catch(Exception e){
+            logger.error("Exception occurred in save function" , e);
             throw new DAOException("Exception occurred in save function" , e);
         }
     }
@@ -90,7 +110,8 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
         ResultSet rs = null;
         try{
             getByIdPS = connection.prepareStatement(getByIdQuery);
-            System.out.println("getByIdPS created");
+            setOfPs.put("getByIdPS", getByIdPS);
+            logger.info("getByIdPS created");
             getByIdPS.setInt(1, id);
             rs = getByIdPS.executeQuery();
             while (rs.next()) {
@@ -98,12 +119,14 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
                 subject.setSubject(rs.getString("SUBJECT"));
             }
         }catch(Exception e){
+            logger.error("Exception occurred in getById function", e);
             throw new DAOException("Exception occurred in getById function", e);
         }
         finally {
             try {
                 rs.close();
             } catch (Exception e) {
+                logger.error("Exception occurred in getById function, finally block", e);
                 throw new DAOException("Exception occurred in getById function, finally block", e);
             }
         }
@@ -115,15 +138,18 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
         try
         {
             updatePS = connection.prepareStatement(updateQuery);
-            System.out.println("updatePS created");
+            setOfPs.put("updatePS", updatePS);
+            logger.info("updatePS created");
             updatePS.setString(1, subject.getSubject());
             updatePS.setInt(2, subject.getId());
             updatePS.executeUpdate();
         }catch(Exception e){
+            logger.error("Exception occurred in update function." , e);
             throw new DAOException("Exception occurred in update function." , e);
         }finally{
             try {
             }catch(Exception e) {
+                logger.error("Exception occurred in Close function, Update PS", e);
                 throw new DAOException("Exception occurred in Close function, Update PS", e);
             }
         }
@@ -134,10 +160,12 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
         try
         {
             deletePS = connection.prepareStatement(deleteQuery);
-            System.out.println("deletePS created");
+            setOfPs.put("deletePS", deletePS);
+            logger.info("deletePS created");
             deletePS.setInt(1, id);
             deletePS.executeUpdate();
         }catch(Exception e){
+            logger.error("Exception occurred in delete function.", e);
             throw new DAOException("Exception occurred in delete function.", e);
         }
     }
@@ -148,17 +176,20 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
         ResultSet rs = null;
         try{
             paginationPS = connection.prepareStatement(paginationQuery);
-            System.out.println("paginationPS created");
+            setOfPs.put("paginationPS", paginationPS);
+            logger.info("paginationPS created");
             rs =  paginationPS.executeQuery();
             if (rs.next()) {
                 result = rs.getInt(1);
             }
         }catch(Exception e){
-            throw new DAOException("Exception occurred in pagination call StudentDAO" + e.getMessage());
+            logger.error("Exception occurred in pagination call StudentDAO", e);
+            throw new DAOException("Exception occurred in pagination call StudentDAO", e);
         }finally {
             try {
                 rs.close();
             } catch (Exception e) {
+                logger.error("Exception occurred in getById function, finally block", e);
                 throw new DAOException("Exception occurred in getById function, finally block", e);
             }
         }
@@ -166,56 +197,9 @@ public class SubjectDAOImpl /*extends AbstractDAO*/ implements SubjectDAO{
     }
 
     public void close() throws DAOException {
-        DAOException daoException = null;
-        if(selectAllInRangePS != null){ try{
-            selectAllInRangePS.close();
-            System.out.println("selectAllInRangePS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, selectAllInRangePS block",e);
-        }}
-        if(selectAllPS != null){ try{
-            selectAllPS.close();
-            System.out.println("selectAllPS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, selectAllPS block",e);
-        }}
-        if(insertPS != null){ try{
-            insertPS.close();
-            System.out.println("insertPS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, insertPS block",e);
-        }}
-        if(getByIdPS != null){ try{
-            getByIdPS.close();
-            System.out.println("getByIdPS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, getByIdPS block",e);
-        }}
-        if(updatePS != null){ try{
-            updatePS.close();
-            System.out.println("updatePS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, updatePS block",e);
-        }}
-        if(deletePS != null){ try{
-            deletePS.close();
-            System.out.println("deletePS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, deletePS block",e);
-        }}
-        if(paginationPS != null){ try{
-            paginationPS.close();
-            System.out.println("paginationPS closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, paginationPS block",e);
-        }}
-        if(connection != null){ try {
-            //closeConnection();
-            connection.close();
-            System.out.println("Connection closed");
-        }catch(Exception e) {
-            daoException = new DAOException("Exception occurred in Close function, closeConnection block",e);
-        }}
+        DAOException daoException;
+        ClosePS closeAllPreparedStatements = new ClosePS();
+        daoException = closeAllPreparedStatements.closePS(setOfPs, connection);
         if(daoException != null){
             throw new DAOException(daoException);
         }

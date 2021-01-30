@@ -1,6 +1,5 @@
 package connector;
 
-
 import exceptions.DAOException;
 import org.apache.commons.dbcp2.BasicDataSource;
 import java.io.InputStream;
@@ -66,7 +65,5 @@ public class DataSource {
         }catch (Exception ex){
             throw new DAOException("Exception occurred in getConnection method DataSource" + ex);
         }
-
     }
-
 }
