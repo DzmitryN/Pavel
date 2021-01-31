@@ -3,7 +3,6 @@ package entities;
 
 public class Mark {
 
-
     Integer ID;
     Integer Mark;
 

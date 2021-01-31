@@ -3,7 +3,6 @@ package entities;
 
 public class MarksSheet {
 
-
     Integer ID;
     String firstName;
     String secondName;
@@ -13,12 +12,8 @@ public class MarksSheet {
     Integer subject_id;
     Integer mark_id;
 
-
-
     public MarksSheet() {
     }
-
-
 
     public MarksSheet(Integer ID, String firstName, String secondName, String subject, Integer mark) {
         this.ID = ID;
@@ -27,8 +22,6 @@ public class MarksSheet {
         this.subject = subject;
         this.mark = mark;
     }
-
-
 
     public Integer getID() {
         return ID;

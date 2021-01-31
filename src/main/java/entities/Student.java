@@ -13,6 +13,7 @@ public class Student {
         student.setSecondName(secondName);
         return student;
     }
+
     public Student studentInitializing(Integer id , String firstName, String secondName){
         Student student = new Student();
         student.setId(id);
@@ -20,6 +21,7 @@ public class Student {
         student.setSecondName(secondName);
         return student;
     }
+
 
     public Integer getId() {
         return Id;
@@ -44,7 +46,4 @@ public class Student {
     public void setSecondName(String secondName) {
         this.secondName = secondName;
     }
-
-
-
 }

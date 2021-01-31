@@ -20,7 +20,7 @@ public class SubjectDAOinWork {
             subjectDAO.delete(8);
 
             //subjectDAO.getById(1);
-            list.addAll(subjectDAO.findAll());
+            list.addAll(subjectDAO.findAll(null));
             subjectDAO.close();
         }catch(Exception e){
             subjectDAO.close();
